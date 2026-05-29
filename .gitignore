@@ -1,0 +1,6 @@
+# Never commit decrypted secrets or the age private key.
+keys.txt
+*.dec
+*.decrypted
+result
+result-*

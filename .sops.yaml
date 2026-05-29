@@ -1,0 +1,10 @@
+# sops creation rules — which age recipients can decrypt secrets/*.yaml.
+# This is YOUR personal age public key (from ~/.config/sops/age/keys.txt).
+# For the fleet, add each machine's / teammate's age recipient and re-encrypt.
+keys:
+  - &samuel age1rc7pxe3e2j0pmc2cz83vgr75mq2av0z37whgny0j3feneun8rgps6k3kas
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *samuel
