@@ -82,6 +82,15 @@ cat ~/nixos-config/home/samuel/vscode/extensions.txt | xargs -L1 code --install-
 - [ ] Claude plugins: re-add the marketplaces listed in `home/samuel/claude/installed-plugins.md`
       (claude-hud, datatactics-skills), then install. Log in to Claude Code.
 
+**Databases (DBeaver) — connections restore from the bundle, no recreating from scratch:**
+- [ ] DBeaver (installed via dev.nix) reads its workspace from `~/.local/share/DBeaverData/…/.dbeaver/`.
+      The bundle restored `data-sources.json` (hosts/dbs/users) + `credentials-config.json` (encrypted pw's)
+      there in Phase 1 → your connections reappear on launch.
+- [ ] If saved passwords don't decrypt (DBeaver key not carried), the connections still load — just
+      re-enter passwords. Postgres superuser creds are in `~/post_super.txt` (restored from bundle);
+      others are in the keyring / `~/Documents/git_password_save.txt`.
+- [ ] SQL query history: your `*.session.sql` files are under `~/projects/.../` (restored from the drive).
+
 ## Phase 6 — Personal overrides & services
 - [ ] **flt.conf SSH override** (your `u119230` + `%%` edit on the shared repo):
       `cd ~/.ssh/config.d-dtacs && git apply ~/flt.conf.personal-override.patch`
