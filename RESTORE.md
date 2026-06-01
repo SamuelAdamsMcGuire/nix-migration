@@ -74,6 +74,9 @@ cp ~/nixos-config/home/samuel/vscode/keybindings.json ~/.config/Code/User/
 cat ~/nixos-config/home/samuel/vscode/extensions.txt | xargs -L1 code --install-extension
 ```
 - [ ] Extensions reinstalled (gitlens, ruff, python, jupyter, sqltools, apache-camel, claude-code, …).
+- [ ] **SQLTools DB connections** restore automatically: they live in `~/projects/{flightpos,fraalliance}/.vscode/settings.json`
+      (restored from the drive in Phase 4, passwords inline) — open those folders in VS Code and the connections are there.
+      ⚠️ those passwords are plaintext — rotate as part of cleanup (Phase 7).
 
 **Cloud / CLI tools** (re-auth is simplest):
 - [ ] `gcloud auth login` + `gcloud config set project <id>` (gcloud installed via dev.nix)
