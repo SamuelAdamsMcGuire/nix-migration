@@ -1,0 +1,22 @@
+[
+  {"query": "my xgb run from yesterday on prod fueling-duration — run_id ca30b35113... is done, can you get it over to the test repo so I can run test.py against it", "should_trigger": true},
+  {"query": "want to kick off a retraining of schedule-predictor-minutes on k8s int, walk me thru it", "should_trigger": true},
+  {"query": "hmo list keeps showing no runs for uplift-order-predictor --env int, is there a creds issue", "should_trigger": true},
+  {"query": "Need to pull the latest uplift_correction model from prod mlflow. Run ID is 950267949ce44f4db686d0692a4d4d4f — where does it need to land", "should_trigger": true},
+  {"query": "got a run in mlflow I want to evaluate locally, the experiment is fueling-duration-predictor. Run id 2afb2cf4364441c4a7a466d3f59a1b76", "should_trigger": true},
+  {"query": "I retrained the deps model on k8s, how do I copy it onto my laptop so i can run test.py against it", "should_trigger": true},
+  {"query": "command to run the uplift-order-predictor training on espprod with the docker backend?", "should_trigger": true},
+  {"query": "mlflow is giving me 401 when I try `hmo list uplift-order-predictor --env int`, what am I missing", "should_trigger": true},
+  {"query": "I think the run 69ac7876fc... is the best hist model of the day, can we test it locally", "should_trigger": true},
+  {"query": "pulling a model artifact from the mlflow tracking server — do i need to source any particular env file first", "should_trigger": true},
+  {"query": "writing a python script that loads a pickled sklearn model from a local file called my_model.pkl and runs predictions on a CSV called customer_data.csv, can you help", "should_trigger": false},
+  {"query": "the mlflow UI at prod.lsyesp.lhgroup.de/flt/mlflow is weirdly slow today, could you check if there's an incident", "should_trigger": false},
+  {"query": "setting up a new kubernetes cluster on hetzner for a personal tailscale side-project, how do i bootstrap it", "should_trigger": false},
+  {"query": "for a tabular regression on flight delay data, would you pick XGBoost or LightGBM — we have maybe 1M rows", "should_trigger": false},
+  {"query": "my argo cron workflow in flt-ramp isn't firing at the scheduled time, the cron expression shows as suspended in the UI — how do i resume it", "should_trigger": false},
+  {"query": "training a sklearn RandomForestClassifier on the iris dataset in a jupyter notebook, how do i save it", "should_trigger": false},
+  {"query": "configuring kubectl contexts in my personal ~/.kube/config for my home lab, not ESP — how do i name them so auto-complete works", "should_trigger": false},
+  {"query": "docker login esp-cr.artifactory.lsyesp.lhgroup.de keeps failing with 401, but this is for the fuel-service dockerfile, not any ml thing", "should_trigger": false},
+  {"query": "does an MAE of 1.56 on flight fueling duration seem reasonable? curious about the business interpretation, not the tooling", "should_trigger": false},
+  {"query": "exporting a pandas dataframe to minio via boto3 — just raw CSV, not any model stuff", "should_trigger": false}
+]

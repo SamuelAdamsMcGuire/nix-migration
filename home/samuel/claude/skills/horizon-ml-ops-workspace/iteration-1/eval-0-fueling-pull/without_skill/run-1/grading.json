@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Provides an executable pull command with the correct run_id",
+      "passed": true,
+      "evidence": "Uses `mlflow artifacts download --run-id ca30b35113ef429685724f7f62dbe73e --artifact-path model`"
+    },
+    {
+      "text": "Targets the prod MLflow tracking server",
+      "passed": true,
+      "evidence": "Sources mlflow_envs.sh which points at prod; explicitly calls this out"
+    },
+    {
+      "text": "Places model under flt-test-fueling-duration/models/",
+      "passed": true,
+      "evidence": "Destination models/duration_notime_xgb_22042026_<run_id>"
+    },
+    {
+      "text": "Uses the canonical <tag>_<ddmmyyyy>_<run_id> naming convention",
+      "passed": true,
+      "evidence": "Derived correctly from the repo's existing folders"
+    },
+    {
+      "text": "Correctly handles MLflow 3.x logged-models API (command would actually succeed)",
+      "passed": false,
+      "evidence": "Uses `--artifact-path model` which assumes run-level artifacts. For MLflow 3.x runs (including the target run) the model is a separate LoggedModel entity under s3://mlflow/artifacts/<exp>/models/m-<uuid>/; the run itself only has HTML plots at the root, so the CLI download would fail with 'Cannot find 'model' artifact'."
+    },
+    {
+      "text": "Covers credential prerequisites",
+      "passed": true,
+      "evidence": "Section 1 sources mlflow_envs.sh and verifies with `env | grep`"
+    },
+    {
+      "text": "Correctly omits --kind (only needed for uplift)",
+      "passed": true,
+      "evidence": "Agent doesn't know about --kind; for fueling this is correct behavior"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "total": 7,
+    "pass_rate": 0.8571428571428571
+  }
+}

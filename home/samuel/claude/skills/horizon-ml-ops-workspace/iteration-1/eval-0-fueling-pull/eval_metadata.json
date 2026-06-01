@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "fueling-pull",
+  "prompt": "I've got a new fueling-duration run that just finished training on prod — run_id `ca30b35113ef429685724f7f62dbe73e`. Can you get it into the test repo so I can run test.py against it locally?",
+  "assertions": []
+}

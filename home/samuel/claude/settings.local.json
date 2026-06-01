@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(iw dev *)",
+      "Bash(ping -c 120 -i 0.5 -W 1 192.168.0.1)",
+      "Bash(ping -c 60 -i 0.5 -W 2 10.176.38.1)",
+      "Bash(ping -c 60 -i 0.5 -W 2 1.1.1.1)"
+    ]
+  }
+}

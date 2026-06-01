@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Provides an executable pull command with the correct run_id",
+      "passed": true,
+      "evidence": "Line 78: `hmo pull ca30b35113ef429685724f7f62dbe73e --env prod`"
+    },
+    {
+      "text": "Targets the prod MLflow tracking server",
+      "passed": true,
+      "evidence": "`--env prod` used throughout; troubleshooting section warns against mixing envs"
+    },
+    {
+      "text": "Places model under flt-test-fueling-duration/models/",
+      "passed": true,
+      "evidence": "Line 92: destination path shows /home/samuel/projects/flt/flt-test-fueling-duration/models/<tag>_22042026_<run_id>/"
+    },
+    {
+      "text": "Uses the canonical <tag>_<ddmmyyyy>_<run_id> naming convention",
+      "passed": true,
+      "evidence": "Explicitly picks tag from existing test-repo conventions (`duration_notime_xgb_*`, etc.) and shows 22042026 date"
+    },
+    {
+      "text": "Correctly handles MLflow 3.x logged-models API (command would actually succeed)",
+      "passed": true,
+      "evidence": "Uses `hmo pull` which internally uses `search_logged_models` (per our e2e test, this command actually works against today's runs)"
+    },
+    {
+      "text": "Covers credential prerequisites",
+      "passed": true,
+      "evidence": "Section 1a lists MLFLOW_TRACKING_PASSWORD + AWS_* + MLFLOW_S3_ENDPOINT_URL; explains auto-loading"
+    },
+    {
+      "text": "Correctly omits --kind (only needed for uplift)",
+      "passed": true,
+      "evidence": "Line 87: '`--kind` is **not** used for fueling-duration'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

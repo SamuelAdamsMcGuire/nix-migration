@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Correctly identifies this as uplift_correction (not uplift)",
+      "passed": true,
+      "evidence": "Destination path explicitly uses uplift_correction; derived from user's phrasing"
+    },
+    {
+      "text": "Provides an executable pull command with the correct run_id",
+      "passed": false,
+      "evidence": "Command uses `--artifact-path uplift_correction` as a best-guess subpath. The actual logged_model name is the algorithm (`HistGradientBoosting`), and in MLflow 3.x it is not at the run's artifact root at all \u2014 it's a separate LoggedModel. The command would fail with artifact-not-found."
+    },
+    {
+      "text": "Destination is under flt-test-uplift-prediction/models/uplift_correction/",
+      "passed": true,
+      "evidence": "Destination path correctly derived from test repo's existing folder structure"
+    },
+    {
+      "text": "Addresses the uplift-vs-correction ambiguity explicitly",
+      "passed": false,
+      "evidence": "No mention that training logs by algorithm name rather than semantic variant. Relies on the user knowing from context."
+    },
+    {
+      "text": "Correctly handles MLflow 3.x logged-models API",
+      "passed": false,
+      "evidence": "Relies on `list_artifacts(run_id)` which only shows HTML plots for MLflow 3.x runs, not the model. Agent doesn't suggest `search_logged_models`."
+    },
+    {
+      "text": "Addresses env (prod vs int) verification",
+      "passed": true,
+      "evidence": "Notes tracking URI must match the env the run was trained on; verifies via `echo $MLFLOW_TRACKING_URI`"
+    },
+    {
+      "text": "Covers credential prerequisites",
+      "passed": true,
+      "evidence": "Section 1 sources mlflow_envs.sh"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 7,
+    "pass_rate": 0.5714285714285714
+  }
+}

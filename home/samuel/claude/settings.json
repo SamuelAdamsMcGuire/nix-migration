@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/interface.espprod/config/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/interface.espprod/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-rahla/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-rahla/deploy/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/integration.espint/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/integration.espprod/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/interface.espint/**)",
+      "Read(//home/samuel/projects/vigilo/vigilo-services/rahla/interface.espint/config/**)",
+      "Bash(docker run:*)",
+      "Bash(keytool:*)",
+      "Read(//home/samuel/projects/**)"
+    ],
+    "additionalDirectories": [
+      "/home/samuel/projects/fraalliance",
+      "/home/samuel/presentations/samueladamsmcguire.github.io"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'cols=$(stty size </dev/tty 2>/dev/null | awk '\"'\"'{print $2}'\"'\"'); export COLUMNS=$(( ${cols:-120} > 4 ? ${cols:-120} - 4 : 1 )); plugin_dir=$(ls -d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/*/claude-hud/*/ 2>/dev/null | awk -F/ '\"'\"'{ print $(NF-1) \"\\t\" $(0) }'\"'\"' | grep -P '\"'\"'^[0-9]+\\.[0-9]+\\.[0-9]+\\t'\"'\"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec \"/usr/bin/node\" \"${plugin_dir}dist/index.js\"'"
+  },
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true,
+    "datatactics-skills@datatactics": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    },
+    "datatactics": {
+      "source": {
+        "source": "directory",
+        "path": "/home/samuel/dtacs-repos/skills"
+      }
+    }
+  }
+}

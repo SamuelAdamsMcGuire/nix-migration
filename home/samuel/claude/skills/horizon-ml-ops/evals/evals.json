@@ -1,0 +1,26 @@
+{
+  "skill_name": "horizon-ml-ops",
+  "evals": [
+    {
+      "id": 0,
+      "name": "fueling-pull",
+      "prompt": "I've got a new fueling-duration run that just finished training on prod — run_id `ca30b35113ef429685724f7f62dbe73e`. Can you get it into the test repo so I can run test.py against it locally?",
+      "expected_output": "Command-level guidance that produces a canonical `<test-repo>/models/<tag>_<ddmmyyyy>_<run_id>/` directory from the specified MLflow run, using prod tracking server + Minio creds.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "uplift-kind-pull",
+      "prompt": "I want to check the latest uplift correction model against the previous version — MLflow run `950267949ce44f4db686d0692a4d4d4f`. Help me get it into the right place in the evaluation repo.",
+      "expected_output": "Guidance that correctly pulls the run as an uplift_correction (not plain uplift) model, lands it under flt-test-uplift-prediction/models/uplift_correction/, using prod creds. Must disambiguate uplift vs uplift_correction somehow — the artifact name alone is ambiguous (it's the algorithm name).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "k8s-train",
+      "prompt": "We want to retrain the schedule-predictor-minutes model on the kubernetes cluster in int env. Walk me through what command to run and what I need set up first.",
+      "expected_output": "A working `mlflow run` (or equivalent) command for kubernetes with espint.json backend-config. Prerequisites: docker login to ESP registry, MLFLOW_TRACKING_* env vars for int, horizon venv, possibly -Pengine oracle parameter.",
+      "files": []
+    }
+  ]
+}

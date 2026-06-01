@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Provides the correct `mlflow run` command (or equivalent wrapper) for kubernetes",
+      "passed": true,
+      "evidence": "Section 2: `mlflow run schedule-predictor-minutes --experiment-name ... --build-image --backend kubernetes --backend-config espint.json`"
+    },
+    {
+      "text": "Uses `espint.json` backend-config (not prod)",
+      "passed": true,
+      "evidence": "Backend-config espint.json used throughout"
+    },
+    {
+      "text": "Uses `--experiment-name schedule-predictor-minutes`",
+      "passed": true,
+      "evidence": "Included in command"
+    },
+    {
+      "text": "Mentions `docker login esp-cr.artifactory.lsyesp.lhgroup.de` prereq",
+      "passed": true,
+      "evidence": "Section 1.2 dedicated to docker login"
+    },
+    {
+      "text": "Correctly handles MLFLOW_TRACKING_* env vars for int (not prod)",
+      "passed": true,
+      "evidence": "Section 1.4 explicitly warns that mlflow_envs.sh points at prod and must NOT be sourced as-is; provides manual int exports. Excellent catch."
+    },
+    {
+      "text": "Does not incorrectly require `-Pengine` param",
+      "passed": true,
+      "evidence": "Documents days_min/days_max/bias_features as the real params"
+    },
+    {
+      "text": "Provides post-submit monitoring (kubectl / MLflow UI) guidance",
+      "passed": true,
+      "evidence": "Section 3 covers kubectl jobs/logs and the int MLflow UI URL"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

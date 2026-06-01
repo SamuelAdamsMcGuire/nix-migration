@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "k8s-train",
+  "prompt": "We want to retrain the schedule-predictor-minutes model on the kubernetes cluster in int env. Walk me through what command to run and what I need set up first.",
+  "assertions": []
+}

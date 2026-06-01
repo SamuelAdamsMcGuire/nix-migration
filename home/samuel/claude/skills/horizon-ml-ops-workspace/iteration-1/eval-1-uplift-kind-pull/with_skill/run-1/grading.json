@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Correctly identifies this as uplift_correction (not uplift)",
+      "passed": true,
+      "evidence": "Explicitly uses `--kind uplift_correction` throughout; dedicated section explains why"
+    },
+    {
+      "text": "Provides an executable pull command with the correct run_id",
+      "passed": true,
+      "evidence": "Line 66: `hmo pull 950267949ce44f4db686d0692a4d4d4f --kind uplift_correction --env <env> --tag <tag>`"
+    },
+    {
+      "text": "Destination is under flt-test-uplift-prediction/models/uplift_correction/",
+      "passed": true,
+      "evidence": "Line 82: /home/samuel/projects/flt/flt-test-uplift-prediction/models/uplift_correction/<tag>_22042026_<run_id>/"
+    },
+    {
+      "text": "Addresses the uplift-vs-correction ambiguity explicitly",
+      "passed": true,
+      "evidence": "Dedicated 'Important: --kind is required here' section explains the training code logs by algorithm, not variant"
+    },
+    {
+      "text": "Correctly handles MLflow 3.x logged-models API",
+      "passed": true,
+      "evidence": "Uses `hmo pull` which internally uses `search_logged_models`"
+    },
+    {
+      "text": "Addresses env (prod vs int) verification",
+      "passed": true,
+      "evidence": "Step 1 suggests `hmo list` against both envs to confirm which one hosts the run"
+    },
+    {
+      "text": "Covers credential prerequisites",
+      "passed": true,
+      "evidence": "Prerequisites section 2 lists all required env vars and auto-load behavior"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

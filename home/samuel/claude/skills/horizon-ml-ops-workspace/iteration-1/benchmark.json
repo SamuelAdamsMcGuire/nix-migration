@@ -1,0 +1,383 @@
+{
+  "metadata": {
+    "skill_name": "horizon-ml-ops",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-22T13:15:25Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 99.6,
+        "tokens": 22149,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Provides an executable pull command with the correct run_id",
+          "passed": true,
+          "evidence": "Line 78: `hmo pull ca30b35113ef429685724f7f62dbe73e --env prod`"
+        },
+        {
+          "text": "Targets the prod MLflow tracking server",
+          "passed": true,
+          "evidence": "`--env prod` used throughout; troubleshooting section warns against mixing envs"
+        },
+        {
+          "text": "Places model under flt-test-fueling-duration/models/",
+          "passed": true,
+          "evidence": "Line 92: destination path shows /home/samuel/projects/flt/flt-test-fueling-duration/models/<tag>_22042026_<run_id>/"
+        },
+        {
+          "text": "Uses the canonical <tag>_<ddmmyyyy>_<run_id> naming convention",
+          "passed": true,
+          "evidence": "Explicitly picks tag from existing test-repo conventions (`duration_notime_xgb_*`, etc.) and shows 22042026 date"
+        },
+        {
+          "text": "Correctly handles MLflow 3.x logged-models API (command would actually succeed)",
+          "passed": true,
+          "evidence": "Uses `hmo pull` which internally uses `search_logged_models` (per our e2e test, this command actually works against today's runs)"
+        },
+        {
+          "text": "Covers credential prerequisites",
+          "passed": true,
+          "evidence": "Section 1a lists MLFLOW_TRACKING_PASSWORD + AWS_* + MLFLOW_S3_ENDPOINT_URL; explains auto-loading"
+        },
+        {
+          "text": "Correctly omits --kind (only needed for uplift)",
+          "passed": true,
+          "evidence": "Line 87: '`--kind` is **not** used for fueling-duration'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 91.5,
+        "tokens": 22063,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Correctly identifies this as uplift_correction (not uplift)",
+          "passed": true,
+          "evidence": "Explicitly uses `--kind uplift_correction` throughout; dedicated section explains why"
+        },
+        {
+          "text": "Provides an executable pull command with the correct run_id",
+          "passed": true,
+          "evidence": "Line 66: `hmo pull 950267949ce44f4db686d0692a4d4d4f --kind uplift_correction --env <env> --tag <tag>`"
+        },
+        {
+          "text": "Destination is under flt-test-uplift-prediction/models/uplift_correction/",
+          "passed": true,
+          "evidence": "Line 82: /home/samuel/projects/flt/flt-test-uplift-prediction/models/uplift_correction/<tag>_22042026_<run_id>/"
+        },
+        {
+          "text": "Addresses the uplift-vs-correction ambiguity explicitly",
+          "passed": true,
+          "evidence": "Dedicated 'Important: --kind is required here' section explains the training code logs by algorithm, not variant"
+        },
+        {
+          "text": "Correctly handles MLflow 3.x logged-models API",
+          "passed": true,
+          "evidence": "Uses `hmo pull` which internally uses `search_logged_models`"
+        },
+        {
+          "text": "Addresses env (prod vs int) verification",
+          "passed": true,
+          "evidence": "Step 1 suggests `hmo list` against both envs to confirm which one hosts the run"
+        },
+        {
+          "text": "Covers credential prerequisites",
+          "passed": true,
+          "evidence": "Prerequisites section 2 lists all required env vars and auto-load behavior"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 132.0,
+        "tokens": 23668,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Provides the correct `mlflow run` command (or equivalent wrapper) for kubernetes",
+          "passed": true,
+          "evidence": "Line 75: `hmo train schedule-predictor-minutes --k8s --env int`; shows expansion to `mlflow run ... --build-image --backend kubernetes --backend-config espint.json`"
+        },
+        {
+          "text": "Uses `espint.json` backend-config (not prod)",
+          "passed": true,
+          "evidence": "Expansion shows `--backend-config espint.json`; --env int explicit"
+        },
+        {
+          "text": "Uses `--experiment-name schedule-predictor-minutes`",
+          "passed": true,
+          "evidence": "Line 87 in expansion"
+        },
+        {
+          "text": "Mentions `docker login esp-cr.artifactory.lsyesp.lhgroup.de` prereq",
+          "passed": true,
+          "evidence": "Section 1b dedicated to docker login with correct registry"
+        },
+        {
+          "text": "Correctly handles MLFLOW_TRACKING_* env vars for int (not prod)",
+          "passed": true,
+          "evidence": "Section 1a notes tracking password comes from mlflow_envs.sh; the hmo wrapper overrides MLFLOW_TRACKING_URI to the int URL automatically"
+        },
+        {
+          "text": "Does not incorrectly require `-Pengine` param",
+          "passed": true,
+          "evidence": "Line 105: 'No `-Pengine=...` is needed for this subproject'"
+        },
+        {
+          "text": "Provides post-submit monitoring (kubectl / MLflow UI) guidance",
+          "passed": true,
+          "evidence": "Section 3 covers kubectl logs, hmo list, MLflow UI URL"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571428571428571,
+        "passed": 6,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 112.8,
+        "tokens": 34962,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Provides an executable pull command with the correct run_id",
+          "passed": true,
+          "evidence": "Uses `mlflow artifacts download --run-id ca30b35113ef429685724f7f62dbe73e --artifact-path model`"
+        },
+        {
+          "text": "Targets the prod MLflow tracking server",
+          "passed": true,
+          "evidence": "Sources mlflow_envs.sh which points at prod; explicitly calls this out"
+        },
+        {
+          "text": "Places model under flt-test-fueling-duration/models/",
+          "passed": true,
+          "evidence": "Destination models/duration_notime_xgb_22042026_<run_id>"
+        },
+        {
+          "text": "Uses the canonical <tag>_<ddmmyyyy>_<run_id> naming convention",
+          "passed": true,
+          "evidence": "Derived correctly from the repo's existing folders"
+        },
+        {
+          "text": "Correctly handles MLflow 3.x logged-models API (command would actually succeed)",
+          "passed": false,
+          "evidence": "Uses `--artifact-path model` which assumes run-level artifacts. For MLflow 3.x runs (including the target run) the model is a separate LoggedModel entity under s3://mlflow/artifacts/<exp>/models/m-<uuid>/; the run itself only has HTML plots at the root, so the CLI download would fail with 'Cannot find 'model' artifact'."
+        },
+        {
+          "text": "Covers credential prerequisites",
+          "passed": true,
+          "evidence": "Section 1 sources mlflow_envs.sh and verifies with `env | grep`"
+        },
+        {
+          "text": "Correctly omits --kind (only needed for uplift)",
+          "passed": true,
+          "evidence": "Agent doesn't know about --kind; for fueling this is correct behavior"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5714285714285714,
+        "passed": 4,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 153.8,
+        "tokens": 40503,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Correctly identifies this as uplift_correction (not uplift)",
+          "passed": true,
+          "evidence": "Destination path explicitly uses uplift_correction; derived from user's phrasing"
+        },
+        {
+          "text": "Provides an executable pull command with the correct run_id",
+          "passed": false,
+          "evidence": "Command uses `--artifact-path uplift_correction` as a best-guess subpath. The actual logged_model name is the algorithm (`HistGradientBoosting`), and in MLflow 3.x it is not at the run's artifact root at all \u2014 it's a separate LoggedModel. The command would fail with artifact-not-found."
+        },
+        {
+          "text": "Destination is under flt-test-uplift-prediction/models/uplift_correction/",
+          "passed": true,
+          "evidence": "Destination path correctly derived from test repo's existing folder structure"
+        },
+        {
+          "text": "Addresses the uplift-vs-correction ambiguity explicitly",
+          "passed": false,
+          "evidence": "No mention that training logs by algorithm name rather than semantic variant. Relies on the user knowing from context."
+        },
+        {
+          "text": "Correctly handles MLflow 3.x logged-models API",
+          "passed": false,
+          "evidence": "Relies on `list_artifacts(run_id)` which only shows HTML plots for MLflow 3.x runs, not the model. Agent doesn't suggest `search_logged_models`."
+        },
+        {
+          "text": "Addresses env (prod vs int) verification",
+          "passed": true,
+          "evidence": "Notes tracking URI must match the env the run was trained on; verifies via `echo $MLFLOW_TRACKING_URI`"
+        },
+        {
+          "text": "Covers credential prerequisites",
+          "passed": true,
+          "evidence": "Section 1 sources mlflow_envs.sh"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 85.7,
+        "tokens": 22860,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Provides the correct `mlflow run` command (or equivalent wrapper) for kubernetes",
+          "passed": true,
+          "evidence": "Section 2: `mlflow run schedule-predictor-minutes --experiment-name ... --build-image --backend kubernetes --backend-config espint.json`"
+        },
+        {
+          "text": "Uses `espint.json` backend-config (not prod)",
+          "passed": true,
+          "evidence": "Backend-config espint.json used throughout"
+        },
+        {
+          "text": "Uses `--experiment-name schedule-predictor-minutes`",
+          "passed": true,
+          "evidence": "Included in command"
+        },
+        {
+          "text": "Mentions `docker login esp-cr.artifactory.lsyesp.lhgroup.de` prereq",
+          "passed": true,
+          "evidence": "Section 1.2 dedicated to docker login"
+        },
+        {
+          "text": "Correctly handles MLFLOW_TRACKING_* env vars for int (not prod)",
+          "passed": true,
+          "evidence": "Section 1.4 explicitly warns that mlflow_envs.sh points at prod and must NOT be sourced as-is; provides manual int exports. Excellent catch."
+        },
+        {
+          "text": "Does not incorrectly require `-Pengine` param",
+          "passed": true,
+          "evidence": "Documents days_min/days_max/bias_features as the real params"
+        },
+        {
+          "text": "Provides post-submit monitoring (kubectl / MLflow UI) guidance",
+          "passed": true,
+          "evidence": "Section 3 covers kubectl jobs/logs and the int MLflow UI URL"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 107.7,
+        "stddev": 21.4306,
+        "min": 91.5,
+        "max": 132.0
+      },
+      "tokens": {
+        "mean": 22626.6667,
+        "stddev": 902.8457,
+        "min": 22063,
+        "max": 23668
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.8095,
+        "stddev": 0.2182,
+        "min": 0.5714,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 117.4333,
+        "stddev": 34.2856,
+        "min": 85.7,
+        "max": 153.8
+      },
+      "tokens": {
+        "mean": 32775.0,
+        "stddev": 9022.5323,
+        "min": 22860,
+        "max": 40503
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.19",
+      "time_seconds": "-9.7",
+      "tokens": "-10148"
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "uplift-kind-pull",
+  "prompt": "I want to check the latest uplift correction model against the previous version — MLflow run `950267949ce44f4db686d0692a4d4d4f`. Help me get it into the right place in the evaluation repo.",
+  "assertions": []
+}
