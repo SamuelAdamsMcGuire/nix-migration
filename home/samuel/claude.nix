@@ -17,22 +17,29 @@ let
 in
 {
   # ---- STATIC: symlinked, edit-in-repo ----
+  # CLAUDE.md is hand-authored global instructions you only ever edit in the repo.
   home.file.".claude/CLAUDE.md".source = ./claude/CLAUDE.md;
-  home.file.".claude/skills".source = ./claude/skills;   # graphify, horizon-ml-ops, ...
 
   # ---- MUTABLE: seed once, keep writable ----
-  # settings.json / settings.local.json: Claude (and the permission system) write
-  # these, so we copy rather than symlink, and only if absent (don't stomp live state).
+  # Everything Claude WRITES at runtime is copied (not symlinked) and only if absent,
+  # so the tool can keep writing and a re-run never clobbers live state:
+  #   - skills/  : skill-creator writes new skills here
+  #   - settings : Claude + the permission system write these
+  # The repo is the SOURCE/restore point — commit changes back when you evolve them.
   home.activation.seedClaudeSettings =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "$HOME/.claude"
       for f in settings.json settings.local.json; do
         dst="$HOME/.claude/$f"
         if [ ! -e "$dst" ]; then
-          $DRY_RUN_CMD mkdir -p "$HOME/.claude"
           $DRY_RUN_CMD cp ${./claude}/$f "$dst"
           $DRY_RUN_CMD chmod u+w "$dst"
         fi
       done
+      if [ ! -e "$HOME/.claude/skills" ]; then
+        $DRY_RUN_CMD cp -rn ${./claude/skills} "$HOME/.claude/skills"
+        $DRY_RUN_CMD chmod -R u+w "$HOME/.claude/skills"
+      fi
     '';
 
   # memory/: precious and append-only. Seed from the repo only if not already present,
