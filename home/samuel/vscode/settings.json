@@ -1,0 +1,19 @@
+{
+    "claudeCode.preferredLocation": "panel",
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+    "redhat.telemetry.enabled": true,
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "files.autoSave": "afterDelay",
+    "workbench.editor.empty.hint": "hidden",
+    "sqldeveloper.datagrid.fontFamily": "'Droid Sans Mono', monospace",
+    "gitlens.advanced.messages": {
+        "suppressLineUncommittedWarning": true
+    }
+}
