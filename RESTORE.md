@@ -15,9 +15,12 @@ Follow top to bottom. Three sources feed this restore:
 - [ ] Plug in the USB drive; note its mount, e.g. `/run/media/$USER/<LABEL>`.
 
 ## Phase 1 — Decrypt & unpack the bundle
+The `.gpg` lives in the same drive folder as the rest of the backup (and a copy on Nextcloud):
 ```bash
 cd ~
-cp /run/media/$USER/<LABEL>/<path>/nixos-migration-backup.tar.zst.gpg ~
+# from the USB drive (label 586A-AC03):
+cp /run/media/$USER/586A-AC03/backups/work_backup_pre_nix_01062026/nixos-migration-backup.tar.zst.gpg ~
+#   …or from Nextcloud if the drive isn't handy.
 export GPG_TTY=$(tty)
 gpg --decrypt nixos-migration-backup.tar.zst.gpg | tar --zstd -xf - -C "$HOME"
 ```
