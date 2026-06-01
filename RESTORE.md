@@ -85,8 +85,12 @@ cat ~/nixos-config/home/samuel/vscode/extensions.txt | xargs -L1 code --install-
 ## Phase 6 — Personal overrides & services
 - [ ] **flt.conf SSH override** (your `u119230` + `%%` edit on the shared repo):
       `cd ~/.ssh/config.d-dtacs && git apply ~/flt.conf.personal-override.patch`
-- [ ] **todo automation**: `systemctl --user enable --now refresh-todo.timer` (units restored from bundle);
-      confirm `~/todo.md` refreshes. Autostart `.desktop` already restored.
+- [ ] **todo automation** (startup + manual only — NO hourly timer):
+      - scripts restored to `~/.local/bin/` (`refresh-todo`, `open-todo.sh`, `scan-parked-items`); ensure `~/.local/bin` is on PATH
+      - **startup refresh**: `~/.config/autostart/typora-todo.desktop` runs `open-todo.sh` at login (restored from bundle)
+      - **manual refresh**: just run `refresh-todo` whenever you want
+      - API creds (Trackspace PAT, Nextcloud) come from the keyring restored in Phase 2
+      - do NOT enable `refresh-todo.timer` (intentionally not carried — you don't want hourly runs)
 - [ ] **GNOME tweaks**: `dconf load /org/gnome/ < ~/gnome-settings-backup.dconf`
 - [ ] **Firefox**: either sign into Firefox Sync, OR the restored `logins.json`/`key4.db`/`places.sqlite`
       in `~/.mozilla/firefox/<profile>/` carry passwords+bookmarks (profile name will differ — copy into the new profile dir).
