@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""One-shot scan of past Claude sessions for moments where the user parked work.
+
+Writes candidate blocks to ~/.claude/projects/-home-samuel/memory/parked_review.md.
+Format keeps candidates as plain prose (no checkboxes) so they don't accidentally
+get aggregated into todo.md until you promote them by writing a real `- [ ]` item
+in the "Confirmed parked items" section at the bottom (or in a separate
+parked_*.md file).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from datetime import datetime
+from pathlib import Path
+
+PROJECTS_ROOT = Path.home() / ".claude" / "projects"
+OUT = Path.home() / ".claude" / "projects" / "-home-samuel" / "memory" / "parked_review.md"
+
+# Strong, user-side parking signals. Tuned for precision over recall.
+USER_RX = re.compile(
+    r"\b("
+    r"park\s+(this|that|it)|parked|parking\s+(this|that|it)|"
+    r"(do|leave|save)\s+(this|that|it)?\s*for\s+later|"
+    r"(let'?s|we'?ll|we\s+will|i'?ll)\s+(do|tackle|handle|come\s+back\s+to)\s+(this|that|it)\s+later|"
+    r"come\s+back\s+to\s+(this|that|it)(\s+later)?|circle\s+back|"
+    r"another\s+(session|day|time)|next\s+session|later\s+session|"
+    r"skip\s+(this|that|it)?\s*for\s+now|not\s+now|"
+    r"add\s+(this|that|it)?\s*to\s+(my\s+)?todo|put\s+(this|that|it)?\s*on\s+(the\s+)?todo"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def extract_text(content) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for c in content:
+            if isinstance(c, dict) and c.get("type") == "text":
+                parts.append(c.get("text", ""))
+            elif isinstance(c, str):
+                parts.append(c)
+        return " ".join(parts)
+    return ""
+
+
+def is_envelope(text: str) -> bool:
+    """Filter out local-command echoes and other harness wrappers."""
+    s = text.lstrip()
+    return s.startswith(("<local-command", "<command-name>", "<command-message>",
+                         "<command-args>", "<ide_opened_file>", "<system-reminder>",
+                         "[Request interrupted"))
+
+
+def scan(path: Path) -> list[dict]:
+    out = []
+    try:
+        with open(path) as f:
+            entries = [json.loads(ln) for ln in f if ln.strip()]
+    except Exception:
+        return out
+
+    seq = []
+    for e in entries:
+        if e.get("type") not in ("user", "assistant"):
+            continue
+        msg = e.get("message", {})
+        if not isinstance(msg, dict):
+            continue
+        text = extract_text(msg.get("content", "")).strip()
+        if not text or is_envelope(text):
+            continue
+        seq.append({"type": e["type"], "ts": e.get("timestamp", ""), "text": text})
+
+    for i, item in enumerate(seq):
+        if item["type"] != "user":
+            continue
+        m = USER_RX.search(item["text"])
+        if not m:
+            continue
+        prev_assist = None
+        for j in range(i - 1, -1, -1):
+            if seq[j]["type"] == "assistant":
+                prev_assist = seq[j]
+                break
+        out.append({
+            "session": path.stem,
+            "project": path.parent.name,
+            "ts": item["ts"],
+            "user_text": item["text"],
+            "matched": m.group(0),
+            "context": prev_assist["text"] if prev_assist else "",
+        })
+    return out
+
+
+def render(cands: list[dict]) -> str:
+    cands = sorted(cands, key=lambda c: c["ts"] or "", reverse=True)
+    out = [
+        "---",
+        "name: Parked items review",
+        "description: Auto-extracted candidates from past Claude sessions — review, then promote real ones to actionable - [ ] items",
+        "type: project",
+        "---",
+        "",
+        f"# Parked candidates from past Claude sessions ({len(cands)})",
+        "",
+        f"_Generated {datetime.now():%Y-%m-%d %H:%M} by `scan-parked-items`._  ",
+        "_Each block below is a moment where you said something like \"park this / for later / do later\". They are NOT yet aggregated into `~/todo.md` — only `- [ ]` lines in this file are._",
+        "",
+        "**To process a candidate:** read it, decide if it's still real. If yes, write a `- [ ]` item under \"Confirmed parked items\" at the bottom. Then delete the candidate block. If no, just delete it. Survivors flow into `todo.md` on next `refresh-todo`.",
+        "",
+        "---",
+        "",
+        "## Candidates",
+        "",
+    ]
+    for c in cands:
+        ts = (c["ts"] or "")[:10] or "unknown"
+        sid = c["session"][:8]
+        ut = c["user_text"].replace("\n", " ").strip()
+        if len(ut) > 300:
+            ut = ut[:300] + "…"
+        ctx = c["context"].replace("\n", " ").strip()
+        if len(ctx) > 600:
+            ctx = ctx[:600] + "…"
+        out.append(f"### {ts} — session `{sid}` (project `{c['project']}`)")
+        out.append(f"**Trigger:** \"{c['matched']}\"  ")
+        out.append(f"**You said:** {ut}  ")
+        if ctx:
+            out.append(f"**Preceding context:** {ctx}")
+        out.append("")
+    out.append("---")
+    out.append("")
+    out.append("## Confirmed parked items")
+    out.append("")
+    out.append("_Add `- [ ]` items here as you process candidates above. These get pulled into `~/todo.md`._")
+    out.append("")
+    return "\n".join(out) + "\n"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite existing parked_review.md (default: refuse if file exists)")
+    args = ap.parse_args()
+
+    if OUT.exists() and not args.force:
+        print(f"refusing to overwrite {OUT} (use --force)", file=sys.stderr)
+        return 1
+
+    cands = []
+    for jsonl in PROJECTS_ROOT.glob("*/*.jsonl"):
+        cands.extend(scan(jsonl))
+
+    OUT.write_text(render(cands))
+    print(f"wrote {len(cands)} candidates to {OUT}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

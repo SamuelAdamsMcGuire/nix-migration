@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/samuel/.local/bin/open-todo.sh
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Typora Todo
+Comment=Open my todo list at login
